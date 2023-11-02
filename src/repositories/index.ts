@@ -1,10 +1,6 @@
-import { User } from "@prisma/client";
+import { Content, User } from "@prisma/client";
 import { ICreateUserDto, IUserDto } from "../dto/user";
-import { RequestHandler } from "express";
-import { IErrorDto } from "../dto/error";
-
-export interface IUserExtended
-  extends Pick<User, "id" | "name" | "username" | "registeredAt"> {}
+import { IContentDto, ICreateContentDto } from "../dto/content";
 
 // type CreationErrorType = "UNIQUE";
 
@@ -17,8 +13,18 @@ export interface IUserExtended
 //   }
 // }
 
+export interface IContent extends Content {
+  User: IUserDto;
+}
 export interface IUserRepository {
   create(user: ICreateUserDto): Promise<IUserExtended>;
   findByUsername(username: string): Promise<User>;
   findById(id: string): Promise<IUserExtended>;
+}
+
+export interface IUserExtended
+  extends Pick<User, "id" | "name" | "username" | "registeredAt"> {}
+
+export interface IContentRepository {
+  create(ownerId: string, content: ICreateContentDto): Promise<IContent>;
 }

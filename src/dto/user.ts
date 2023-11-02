@@ -2,7 +2,7 @@ export interface IUserDto {
   id: string;
   username: string;
   name: string;
-  registerdAt: string;
+  registeredAt: Date;
 }
 
 export interface ICreateUserDto {
