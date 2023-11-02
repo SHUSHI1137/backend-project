@@ -17,4 +17,5 @@ export interface IUserExtended
 
 export interface IUserRepository {
   create(user: ICreateUserDto): Promise<IUserExtended>;
+  findByUsername(username: string): Promise<User>;
 }
