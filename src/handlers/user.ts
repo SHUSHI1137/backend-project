@@ -8,12 +8,36 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { ICredentialDto, ILoginDto } from "../dto/auth";
 import { sign } from "jsonwebtoken";
 import { JWT_SECRET } from "../const";
+import { AuthStatus } from "../middleware/jwt";
 
 export default class UserHandler implements IUserHandler {
   private repo: IUserRepository;
   constructor(repo: IUserRepository) {
     this.repo = repo;
   }
+
+  public selfcheck: RequestHandler<
+    {},
+    IUserDto | IErrorDto,
+    unknown,
+    unknown,
+    AuthStatus
+  > = async (req, res) => {
+    try {
+      const { registeredAt, ...others } = await this.repo.findById(
+        res.locals.user.id
+      );
+
+      return res
+        .status(200)
+        .json({ ...others, registerdAt: registeredAt.toISOString() })
+        .end();
+    } catch (error) {
+      console.error(error);
+
+      return res.status(500).send({ message: "Internal Server Error" });
+    }
+  };
 
   public login: RequestHandler<{}, ICredentialDto | IErrorDto, ILoginDto> =
     async (req, res) => {

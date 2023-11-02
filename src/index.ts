@@ -32,6 +32,8 @@ const authRouter = express.Router();
 
 app.use("/auth", authRouter);
 
+app.use("/auth/me", jwtMiddleware.auth, userHandler.selfcheck);
+
 authRouter.post("/login", userHandler.login);
 
 app.listen(PORT, () => {

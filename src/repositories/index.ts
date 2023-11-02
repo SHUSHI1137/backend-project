@@ -1,5 +1,7 @@
 import { User } from "@prisma/client";
-import { ICreateUserDto } from "../dto/user";
+import { ICreateUserDto, IUserDto } from "../dto/user";
+import { RequestHandler } from "express";
+import { IErrorDto } from "../dto/error";
 
 export interface IUserExtended
   extends Pick<User, "id" | "name" | "username" | "registeredAt"> {}
@@ -18,4 +20,5 @@ export interface IUserExtended
 export interface IUserRepository {
   create(user: ICreateUserDto): Promise<IUserExtended>;
   findByUsername(username: string): Promise<User>;
+  findById(id: string): Promise<IUserExtended>;
 }
