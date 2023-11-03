@@ -30,7 +30,7 @@ export interface IUserHandler {
 }
 
 export interface IContentHandler {
-  getAll: RequestHandler<Empty, IContent[]>;
+  getAll: RequestHandler<Empty, IContent[] | IErrorDto>;
   getById: RequestHandler<ID, IContent | IErrorDto>;
   create: RequestHandler<{}, IContentDto | IErrorDto, ICreateContentDto>;
   update: RequestHandler<ID, IContent | string | IErrorDto, IUpdateContentDto>;
