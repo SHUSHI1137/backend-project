@@ -25,7 +25,7 @@ model Content {
   videoUrl    String   @db.VarChar(255)
   comment     String   @db.VarChar(255)
   rating      Int      @db.Integer
-  thumbnaiRul String   @db.VarChar(255)
+  thumbnaiUrl String   @db.VarChar(255)
   creatorName String   @db.VarChar(255)
   creatorUrl  String   @db.VarChar(255)
   createdAt   DateTime @default(now())

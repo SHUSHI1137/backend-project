@@ -30,7 +30,7 @@ export default class UserHandler implements IUserHandler {
 
       return res
         .status(200)
-        .json({ ...others, registerdAt: registeredAt.toISOString() })
+        .json({ ...others, registeredAt })
         .end();
     } catch (error) {
       console.error(error);
@@ -96,7 +96,7 @@ export default class UserHandler implements IUserHandler {
           id: registeredId,
           name: registeredName,
           username: registeredUsername,
-          registerdAt: `${registeredAt}`,
+          registeredAt: registeredAt,
         })
         .end();
     } catch (error) {
@@ -104,7 +104,7 @@ export default class UserHandler implements IUserHandler {
         error instanceof PrismaClientKnownRequestError &&
         error.code === "P2002"
       ) {
-        return res.status(500).json({
+        return res.status(401).json({
           message: `Name is invalid`,
         });
       }
