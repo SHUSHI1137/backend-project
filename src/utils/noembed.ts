@@ -1,6 +1,9 @@
 import axios from "axios";
 import { ICreateContentDto } from "../dto/content";
-import { videoInfoDto } from "../dto/noembed";
+import { OEmbedError, videoInfoDto } from "../dto/noembed";
+
+const isError = (data: videoInfoDto | OEmbedError): data is OEmbedError =>
+  Object.keys(data).includes("error");
 
 export const oembedInfo = async (
   videoUrl: string
@@ -11,10 +14,15 @@ export const oembedInfo = async (
   >
 > => {
   try {
-    const result = await axios.get<videoInfoDto>(
+    const result = await axios.get<videoInfoDto | OEmbedError>(
       `https://noembed.com/embed?url=${videoUrl}`
     );
-    const { title, author_name, author_url, thumbnail_url } = result.data;
+
+    const oembedData = result.data;
+    if (isError(oembedData)) throw new URIError("Invalid video link");
+
+    const { title, author_name, author_url, thumbnail_url } = oembedData;
+
     console.log(title, author_name, author_url, thumbnail_url);
 
     return {

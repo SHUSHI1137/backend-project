@@ -16,7 +16,7 @@ export default class UserHandler implements IUserHandler {
     this.repo = repo;
   }
 
-  public selfcheck: RequestHandler<
+  public getPersonalInfo: RequestHandler<
     {},
     IUserDto | IErrorDto,
     unknown,

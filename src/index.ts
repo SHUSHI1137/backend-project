@@ -39,7 +39,7 @@ const authRouter = express.Router();
 
 app.use("/auth", authRouter);
 
-authRouter.get("/me", jwtMiddleware.auth, userHandler.selfcheck);
+authRouter.get("/me", jwtMiddleware.auth, userHandler.getPersonalInfo);
 
 authRouter.post("/login", userHandler.login);
 
@@ -49,12 +49,15 @@ app.use("/content", contentRouter);
 
 contentRouter.post("", jwtMiddleware.auth, contentHandler.create);
 
-app.use(jwtMiddleware.auth, contentRouter);
-
 contentRouter.get("/", contentHandler.getAll);
 
 contentRouter.get("/:id", contentHandler.getById);
 
+contentRouter.patch("/:id", jwtMiddleware.auth, contentHandler.update);
+
+contentRouter.delete("/:id", jwtMiddleware.auth, contentHandler.delete);
+
+//* endpoint test oembed
 // app.post("/test", async (req, res) => {
 //   const { url } = req.body;
 //   const info = await axios.get(`https://noembed.com/embed?url=${url}`);
