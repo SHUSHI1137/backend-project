@@ -15,22 +15,41 @@ export default class ContentHandler implements IContentHandler {
     this.repo = repo;
   }
 
-  public getAll: RequestHandler<Empty, IContent[]> = async (req, res) => {
-    const result = await this.repo.getAll();
+  public getAll: RequestHandler<Empty, IContent[] | IErrorDto> = async (
+    req,
+    res
+  ) => {
+    try {
+      const result = await this.repo.getAll();
 
-    return res.status(200).json(result).end();
+      return res.status(200).json(result).end();
+    } catch (error) {
+      console.error(error);
+      if (error instanceof URIError)
+        return res.status(400).json({ message: `${error}` });
+
+      res.status(500).json({ message: "Internal Server Error" }).end();
+    }
   };
 
   public getById: RequestHandler<ID, IContent | IErrorDto> = async (
     req,
     res
   ) => {
-    const result = await this.repo.getById(Number(req.params.id));
+    try {
+      const result = await this.repo.getById(Number(req.params.id));
 
-    if (result !== result)
-      return res.status(404).json({ message: "Content not found" });
+      if (result !== result)
+        return res.status(404).json({ message: "Content not found" });
 
-    return res.status(200).json(result).end();
+      return res.status(200).json(result).end();
+    } catch (error) {
+      console.error(error);
+      if (error instanceof URIError)
+        return res.status(400).json({ message: `${error}` });
+
+      res.status(404).json({ message: "Content not found" }).end();
+    }
   };
 
   public create: RequestHandler<
@@ -101,18 +120,26 @@ export default class ContentHandler implements IContentHandler {
     IContent | string | IErrorDto,
     IUpdateContentDto
   > = async (req, res) => {
-    const { comment, rating } = req.body;
+    try {
+      const { comment, rating } = req.body;
 
-    if (typeof comment !== "string")
-      return res.status(400).json({ message: "Comment is Wrong" });
-    if (typeof rating !== "number" || rating > 5 || rating < 0)
-      return res.status(400).json({ message: "Rating is between range 0-5" });
+      if (typeof comment !== "string")
+        return res.status(400).json({ message: "Comment is Wrong" });
+      if (typeof rating !== "number" || rating > 5 || rating < 0)
+        return res.status(400).json({ message: "Rating is between range 0-5" });
 
-    const result = await this.repo.update(Number(req.params.id), {
-      comment,
-      rating,
-    });
-    return res.status(200).json(result);
+      const result = await this.repo.update(Number(req.params.id), {
+        comment,
+        rating,
+      });
+      return res.status(200).json(result);
+    } catch (error) {
+      console.error(error);
+      if (error instanceof URIError)
+        return res.status(400).json({ message: `${error}` });
+
+      res.status(404).json({ message: "Content not found" }).end();
+    }
   };
 
   public delete: RequestHandler<
@@ -122,17 +149,28 @@ export default class ContentHandler implements IContentHandler {
     undefined,
     AuthStatus
   > = async (req, res) => {
-    const { ownerId } = await this.repo.getById(Number(req.params.id));
+    try {
+      const { ownerId } = await this.repo.getById(Number(req.params.id));
 
-    if (ownerId !== res.locals.user.id)
-      return res
-        .status(403)
-        .json({ message: "You're not a owner this content" })
+      if (ownerId !== res.locals.user.id)
+        return res
+          .status(403)
+          .json({ message: "You're not a owner this content" })
+          .end();
+
+      const result = await this.repo.delete(Number(req.params.id));
+      console.log(result);
+
+      return res.status(200).json(result).end();
+    } catch (error) {
+      console.error(error);
+      if (error instanceof URIError)
+        return res.status(400).json({ message: `${error}` });
+
+      res
+        .status(404)
+        .json({ message: "Can't delete because content not found" })
         .end();
-
-    const result = await this.repo.delete(Number(req.params.id));
-    console.log(result);
-
-    return res.status(200).json(result).end();
+    }
   };
 }
