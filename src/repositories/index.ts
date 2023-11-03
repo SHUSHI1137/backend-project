@@ -1,6 +1,6 @@
 import { Content, User } from "@prisma/client";
 import { ICreateUserDto, IUserDto } from "../dto/user";
-import { IContentDto, ICreateContentDto } from "../dto/content";
+import { ICreateContentDto } from "../dto/content";
 
 // type CreationErrorType = "UNIQUE";
 
@@ -26,5 +26,7 @@ export interface IUserExtended
   extends Pick<User, "id" | "name" | "username" | "registeredAt"> {}
 
 export interface IContentRepository {
+  getAll(): Promise<IContent[]>;
+  getById(id: number): Promise<IContent>;
   create(ownerId: string, content: ICreateContentDto): Promise<IContent>;
 }
