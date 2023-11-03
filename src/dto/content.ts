@@ -1,3 +1,4 @@
+import { Content } from "@prisma/client";
 import { IUserDto } from "./user";
 
 export interface IContentDto {
@@ -27,4 +28,4 @@ export interface ICreateContentDto
   > {}
 
 export interface IUpdateContentDto
-  extends Omit<ICreateContentDto, "videoUrl"> {}
+  extends Pick<Content, "comment" | "rating"> {}

@@ -4,3 +4,8 @@ export interface videoInfoDto {
   author_url: string;
   thumbnail_url: string;
 }
+
+export interface OEmbedError {
+  url: string;
+  error: string;
+}

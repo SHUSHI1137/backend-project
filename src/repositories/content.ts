@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { IContentDto, ICreateContentDto } from "../dto/content";
+import { ICreateContentDto, IUpdateContentDto } from "../dto/content";
 import { IContent, IContentRepository } from ".";
 
 export default class ContentRepository implements IContentRepository {
@@ -52,6 +52,27 @@ export default class ContentRepository implements IContentRepository {
             registeredAt: true,
           },
         },
+      },
+    });
+  }
+  public async update(
+    id: number,
+    content: IUpdateContentDto
+  ): Promise<IContent> {
+    return await this.prisma.content.update({
+      where: { id },
+      data: content,
+      include: {
+        User: {},
+      },
+    });
+  }
+
+  public async delete(id: number): Promise<IContent> {
+    return await this.prisma.content.delete({
+      where: { id },
+      include: {
+        User: {},
       },
     });
   }
