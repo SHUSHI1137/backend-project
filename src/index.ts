@@ -1,13 +1,12 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
-import { IUserRepository } from "./repositories";
 import UserRepository from "./repositories/user";
 import { IContentHandler, IUserHandler } from "./handlers";
 import UserHandler from "./handlers/user";
 import JWTMiddleware from "./middleware/jwt";
 import ContentHandler from "./handlers/content";
 import ContentRepository from "./repositories/content";
-import axios from "axios";
+import cors from "cors";
 
 const PORT = Number(process.env.PORT || 8888);
 const app = express();
@@ -24,6 +23,7 @@ const contentHandler: IContentHandler = new ContentHandler(contentRepo);
 const jwtMiddleware = new JWTMiddleware();
 
 app.use(express.json());
+app.use(cors());
 
 app.get("/", jwtMiddleware.auth, (req, res) => {
   return res.status(200).send("Welcome to LearnHub").end();
@@ -35,11 +35,13 @@ app.use("/user", userRouter);
 
 userRouter.post("/", userHandler.registration);
 
+userRouter.get("/:username", userHandler.findByUsername);
+
 const authRouter = express.Router();
 
 app.use("/auth", authRouter);
 
-authRouter.get("/me", jwtMiddleware.auth, userHandler.getPersonalInfo);
+authRouter.get("/me", jwtMiddleware.auth, userHandler.findById);
 
 authRouter.post("/login", userHandler.login);
 
@@ -49,7 +51,7 @@ app.use("/content", contentRouter);
 
 contentRouter.post("", jwtMiddleware.auth, contentHandler.create);
 
-contentRouter.get("/", contentHandler.getAll);
+contentRouter.get("", contentHandler.getAll);
 
 contentRouter.get("/:id", contentHandler.getById);
 
