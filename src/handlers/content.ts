@@ -55,7 +55,9 @@ export default class ContentHandler implements IContentHandler {
   public create: RequestHandler<
     {},
     IContentDto | IErrorDto,
-    ICreateContentDto
+    ICreateContentDto,
+    undefined,
+    AuthStatus
   > = async (req, res) => {
     const { videoUrl, comment, rating } = req.body;
 
@@ -118,9 +120,19 @@ export default class ContentHandler implements IContentHandler {
   public update: RequestHandler<
     ID,
     IContent | string | IErrorDto,
-    IUpdateContentDto
+    IUpdateContentDto,
+    undefined,
+    AuthStatus
   > = async (req, res) => {
     try {
+      const { ownerId } = await this.repo.getById(Number(req.params.id));
+
+      if (ownerId !== res.locals.user.id)
+        return res
+          .status(403)
+          .json({ message: "You're not a owner this content" })
+          .end();
+
       const { comment, rating } = req.body;
 
       if (typeof comment !== "string")

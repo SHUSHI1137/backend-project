@@ -33,8 +33,20 @@ export interface IUserHandler {
 export interface IContentHandler {
   getAll: RequestHandler<Empty, IContent[] | IErrorDto>;
   getById: RequestHandler<ID, IContent | IErrorDto>;
-  create: RequestHandler<{}, IContentDto | IErrorDto, ICreateContentDto>;
-  update: RequestHandler<ID, IContent | string | IErrorDto, IUpdateContentDto>;
+  create: RequestHandler<
+    {},
+    IContentDto | IErrorDto,
+    ICreateContentDto,
+    undefined,
+    AuthStatus
+  >;
+  update: RequestHandler<
+    ID,
+    IContent | string | IErrorDto,
+    IUpdateContentDto,
+    undefined,
+    AuthStatus
+  >;
   delete: RequestHandler<
     ID,
     IContent | string | IErrorDto,
