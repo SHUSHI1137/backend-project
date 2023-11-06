@@ -16,7 +16,7 @@ export default class UserHandler implements IUserHandler {
     this.repo = repo;
   }
 
-  public getPersonalInfo: RequestHandler<
+  public findById: RequestHandler<
     {},
     IUserDto | IErrorDto,
     unknown,
@@ -36,6 +36,25 @@ export default class UserHandler implements IUserHandler {
       console.error(error);
 
       return res.status(500).send({ message: "Internal Server Error" });
+    }
+  };
+
+  public findByUsername: RequestHandler<
+    { username: string },
+    IUserDto | IErrorDto
+  > = async (req, res) => {
+    try {
+      const { password, registeredAt, ...userInfo } =
+        await this.repo.findByUsername(req.params.username);
+
+      return res
+        .status(200)
+        .json({ ...userInfo, registeredAt: registeredAt })
+        .end();
+    } catch (error) {
+      console.error(error);
+
+      return res.status(404).send({ message: "User not found" });
     }
   };
 

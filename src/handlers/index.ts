@@ -20,13 +20,14 @@ export interface ID {
 export interface IUserHandler {
   registration: RequestHandler<{}, IUserDto | IErrorDto, ICreateUserDto>;
   login: RequestHandler<{}, ICredentialDto | IErrorDto, ILoginDto>;
-  getPersonalInfo: RequestHandler<
+  findById: RequestHandler<
     {},
     IUserDto | IErrorDto,
     unknown,
     unknown,
     AuthStatus
   >;
+  findByUsername: RequestHandler<{ username: string }, IUserDto | IErrorDto>;
 }
 
 export interface IContentHandler {
