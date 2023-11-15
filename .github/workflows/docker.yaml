@@ -12,5 +12,5 @@ jobs:
         run: pwd
       - name: Checkout
         uses: actions/checkout@main
-      - name:List files and directory
+      - name: List files and directory
         run: ls
