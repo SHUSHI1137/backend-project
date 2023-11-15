@@ -9,7 +9,8 @@ jobs:
       - name: Print out hello-world
         run: echo "Hello, world."
       - name: Checkout
-        uses: actions/checkout@main
+        # uses: actions/checkout@main
+        uses: actions/checkout@v4
       - name: List files and directory
         run: ls
       - name: Login to Docker Hub
