@@ -9,11 +9,14 @@ import ContentRepository from "./repositories/content";
 import cors from "cors";
 import { RedisClientType, createClient } from "redis";
 import BlacklistRepository from "./repositories/blacklist";
+import { REDIS_URL } from "./const";
 
 const PORT = Number(process.env.PORT || 8888);
 const app = express();
 const clnt = new PrismaClient();
-const redisClnt: RedisClientType = createClient();
+const redisClnt: RedisClientType = createClient({
+  url: REDIS_URL,
+});
 
 clnt
   .$connect()
