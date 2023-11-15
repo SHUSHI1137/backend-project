@@ -15,6 +15,13 @@ const app = express();
 const clnt = new PrismaClient();
 const redisClnt: RedisClientType = createClient();
 
+clnt
+  .$connect()
+  .then(() => redisClnt.connect())
+  .catch((err) => {
+    console.error("Error", err);
+  });
+
 const userRepo = new UserRepository(clnt);
 
 const blacklistRepo = new BlacklistRepository(redisClnt);
