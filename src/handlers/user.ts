@@ -1,19 +1,25 @@
 import { IUserHandler } from ".";
-import { IUserRepository } from "../repositories";
+import { IBlacklistRepository, IUserRepository } from "../repositories";
 import { hashPassword, verifyPassword } from "../utils/bcrypt";
 import { RequestHandler } from "express";
 import { ICreateUserDto, IUserDto } from "../dto/user";
 import { IErrorDto } from "../dto/error";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import {
+  PrismaClientKnownRequestError,
+  Public,
+} from "@prisma/client/runtime/library";
 import { ICredentialDto, ILoginDto } from "../dto/auth";
-import { sign } from "jsonwebtoken";
+import { JwtPayload, sign, verify } from "jsonwebtoken";
 import { JWT_SECRET } from "../const";
 import { AuthStatus } from "../middleware/jwt";
+import { IMessageDto } from "../dto/message";
 
 export default class UserHandler implements IUserHandler {
   private repo: IUserRepository;
-  constructor(repo: IUserRepository) {
+  private blacklistRepo: IBlacklistRepository;
+  constructor(repo: IUserRepository, blacklistRepo: IBlacklistRepository) {
     this.repo = repo;
+    this.blacklistRepo = blacklistRepo;
   }
 
   public findById: RequestHandler<
@@ -131,5 +137,31 @@ export default class UserHandler implements IUserHandler {
         message: `Internal Server Error`,
       });
     }
+  };
+
+  public logout: RequestHandler<
+    {},
+    IMessageDto,
+    undefined,
+    undefined,
+    AuthStatus
+  > = async (req, res) => {
+    const authHeader = req.header("Authorization");
+    if (!authHeader)
+      return res
+        .status(400)
+        .send({ message: "Authorization is expected" })
+        .end();
+
+    const token = authHeader.replace("Bearer ", "").trim();
+
+    const decoded = verify(token, JWT_SECRET) as JwtPayload;
+
+    const exp = decoded.exp;
+
+    if (!exp)
+      return res.status(400).send({ message: "expire is missing" }).end();
+
+    this.blacklistRepo.addToBlacklist(token, exp);
   };
 }

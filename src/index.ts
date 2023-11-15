@@ -7,14 +7,19 @@ import JWTMiddleware from "./middleware/jwt";
 import ContentHandler from "./handlers/content";
 import ContentRepository from "./repositories/content";
 import cors from "cors";
+import { createClient } from "redis";
+import BlacklistRepository from "./repositories/blacklist";
 
 const PORT = Number(process.env.PORT || 8888);
 const app = express();
 const clnt = new PrismaClient();
+const redisClnt = createClient();
 
 const userRepo = new UserRepository(clnt);
 
-const userHandler: IUserHandler = new UserHandler(userRepo);
+const blacklistRepo = new BlacklistRepository(redisClnt);
+
+const userHandler: IUserHandler = new UserHandler(userRepo, blacklistRepo);
 
 const contentRepo = new ContentRepository(clnt);
 
