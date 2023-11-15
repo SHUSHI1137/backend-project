@@ -6,6 +6,8 @@ jobs:
   hello-world:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@main
       - name: Echo hello-world
         run: echo "Hello, world."
       - name: Where i'm i
