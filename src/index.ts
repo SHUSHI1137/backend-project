@@ -11,6 +11,8 @@ import { RedisClientType, createClient } from "redis";
 import BlacklistRepository from "./repositories/blacklist";
 import { REDIS_URL } from "./const";
 
+console.log(process.env);
+
 const PORT = Number(process.env.PORT || 8888);
 const app = express();
 const clnt = new PrismaClient();
