@@ -2,13 +2,13 @@ name: Docker build image
 
 on: push
 
-jobs: 
+jobs:
   hello-world:
     runs-on: ubuntu-latest
     steps:
       - name: Echo hello-world
-      run: echo "Hello, world."
+        run: echo "Hello, world."
       - name: Where i'm i
-      run: pwd
+        run: pwd
       - name: I don't know
-      run: ls
+        run: ls
