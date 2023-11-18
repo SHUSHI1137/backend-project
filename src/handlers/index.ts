@@ -10,6 +10,7 @@ import {
 } from "../dto/content";
 import { IContent } from "../repositories";
 import { Content } from "@prisma/client";
+import { IMessageDto } from "../dto/message";
 
 export interface Empty {}
 
@@ -28,6 +29,7 @@ export interface IUserHandler {
     AuthStatus
   >;
   findByUsername: RequestHandler<{ username: string }, IUserDto | IErrorDto>;
+  logout: RequestHandler<{}, IMessageDto, undefined, undefined, AuthStatus>;
 }
 
 export interface IContentHandler {
